@@ -4,7 +4,11 @@ class ChatApp {
         this.questionInput = document.getElementById('questionInput');
         this.sendButton = document.getElementById('sendButton');
         this.statusBar = document.getElementById('modelStatus');
-        this.apiUrl = 'http://localhost:3000/api'; // URL base da API
+        
+        // Usar a URL atual do navegador como base
+        this.apiUrl = window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000/api'
+            : '/api';
         
         this.init();
     }

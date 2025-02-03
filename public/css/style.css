@@ -58,6 +58,8 @@ body {
 .ai-message {
     background-color: #f5f5f5;
     margin-right: 20%;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .input-container {
@@ -92,6 +94,17 @@ button:hover {
 .loading {
     opacity: 0.7;
     pointer-events: none;
+}
+
+.message.typing::after {
+    content: '▋';
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 @media (max-width: 600px) {

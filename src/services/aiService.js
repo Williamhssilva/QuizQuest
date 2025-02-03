@@ -6,8 +6,48 @@ class AIService {
         this.model = null;
         this.isLoading = false;
         this.isReady = false;
+        this.requestQueue = [];
+        this.isProcessing = false;
         this.initModel();
         console.log('AIService iniciado - Aguardando carregamento do modelo...');
+    }
+
+    async addToQueue(question, type = 'normal') {
+        console.log(`➕ Adicionando requisição à fila - Tipo: ${type}`);
+        return new Promise((resolve, reject) => {
+            this.requestQueue.push({ question, resolve, reject, type });
+            this.processQueue();
+        });
+    }
+
+    async processQueue() {
+        if (this.isProcessing || this.requestQueue.length === 0) return;
+
+        this.isProcessing = true;
+        console.log(`📋 Processando fila - ${this.requestQueue.length} requisições pendentes`);
+
+        try {
+            const { question, resolve, reject, type } = this.requestQueue[0];
+
+            let response;
+            if (type === 'normal') {
+                response = await this.processQuestion(question);
+            } else if (type === 'stream') {
+                response = this.streamResponse(question);
+            }
+
+            resolve(response);
+        } catch (error) {
+            const { reject } = this.requestQueue[0];
+            reject(error);
+        } finally {
+            this.requestQueue.shift();
+            this.isProcessing = false;
+            
+            if (this.requestQueue.length > 0) {
+                setImmediate(() => this.processQueue());
+            }
+        }
     }
 
     async initModel() {
@@ -39,11 +79,13 @@ class AIService {
     async getModelStatus() {
         console.log('Status atual do modelo:', {
             isLoading: this.isLoading,
-            isReady: this.isReady
+            isReady: this.isReady,
+            queueLength: this.requestQueue.length
         });
         return {
             isLoading: this.isLoading,
-            isReady: this.isReady
+            isReady: this.isReady,
+            queueLength: this.requestQueue.length
         };
     }
 
@@ -79,6 +121,41 @@ class AIService {
             throw error;
         }
     }
+
+    async* streamResponse(question) {
+        if (!this.isReady) {
+            console.warn('❌ Tentativa de usar modelo não inicializado');
+            throw new Error('Modelo ainda não está pronto');
+        }
+        
+        try {
+            console.log('📝 Iniciando streaming para pergunta:', question);
+            console.time('tempo_resposta_stream');
+            
+            const response = await createCompletion(this.model, question, {
+                temperature: 0.7,
+                maxTokens: 500,
+                topP: 0.95,
+                topK: 40,
+                repeatPenalty: 1.1
+            });
+            
+            // Simula streaming dividindo a resposta em chunks
+            const text = response.choices[0].message.content;
+            const words = text.split(' ');
+            
+            for (const word of words) {
+                yield word + ' ';
+                await new Promise(resolve => setTimeout(resolve, 50)); // Pequeno delay para simular streaming
+            }
+            
+            console.timeEnd('tempo_resposta_stream');
+            console.log('✅ Streaming concluído');
+        } catch (error) {
+            console.error('❌ Erro no streaming:', error);
+            throw error;
+        }
+    }
 }
 
-module.exports = new AIService(); 
+module.exports = new AIService();

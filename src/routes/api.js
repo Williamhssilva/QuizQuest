@@ -28,7 +28,7 @@ router.post('/chat', async (req, res) => {
             return res.status(400).json({ error: 'Pergunta não fornecida' });
         }
         
-        const response = await aiService.processQuestion(question);
+        const response = await aiService.addToQueue(question, 'normal');
         const processTime = Date.now() - startTime;
         
         console.log('✅ Resposta enviada:', {
@@ -41,6 +41,36 @@ router.post('/chat', async (req, res) => {
     } catch (error) {
         console.error('❌ Erro ao processar chat:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/chat/stream', async (req, res) => {
+    const { question } = req.body;
+    
+    console.log('💬 Nova requisição de streaming recebida:', question);
+    
+    if (!question) {
+        console.warn('❌ Pergunta vazia recebida');
+        return res.status(400).json({ error: 'Pergunta não fornecida' });
+    }
+
+    try {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+
+        const stream = await aiService.addToQueue(question, 'stream');
+        
+        for await (const chunk of stream) {
+            res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
+        }
+
+        res.write('data: [DONE]\n\n');
+        res.end();
+    } catch (error) {
+        console.error('❌ Erro no streaming:', error);
+        res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+        res.end();
     }
 });
 

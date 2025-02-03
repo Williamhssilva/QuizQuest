@@ -21,7 +21,12 @@ app.use((req, res, next) => {
 });
 
 // Middlewares
-app.use(cors(config.corsOptions));
+app.use(cors({
+    origin: true, // aceita requisições de qualquer origem
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Servir arquivos estáticos da pasta public
