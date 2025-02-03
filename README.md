@@ -1,4 +1,4 @@
-# Chat com IA Local
+# QuizQuest
 
 Uma aplicação web que utiliza o modelo Mistral-7B localmente através do GPT4All para processar perguntas e respostas.
 
@@ -23,8 +23,8 @@ Uma aplicação web que utiliza o modelo Mistral-7B localmente através do GPT4A
 
 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/chat-ia-local.git
-cd chat-ia-local
+git clone https://github.com/williamhssilva/QuizQuest.git
+cd QuizQuest
 ```
 
 2. Instale as dependências
@@ -123,8 +123,5 @@ Este projeto está sob a licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) 
 - [Nomic AI](https://home.nomic.ai) pela biblioteca Node.js
 - Comunidade open source
 
-## 📫 Contato
 
-Seu Nome - [@seutwitter](https://twitter.com/seutwitter) - email@exemplo.com
-
-Link do projeto: [https://github.com/seu-usuario/chat-ia-local](https://github.com/seu-usuario/chat-ia-local) 
+Link do projeto: [https://github.com/williamhssilva/chat-ia-local](https://github.com/williamhssilva/chat-ia-local) 
