@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat com IA</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="status-bar" id="modelStatus">
+            Status do modelo: Carregando...
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages"></div>
+            
+            <div class="input-container">
+                <textarea 
+                    id="questionInput" 
+                    placeholder="Digite sua pergunta aqui..."
+                    rows="3"
+                ></textarea>
+                <button id="sendButton">Enviar</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html> 
