@@ -76,7 +76,7 @@ As configurações podem ser ajustadas em `src/config/config.js`:
 ## 📦 Estrutura do Projeto
 
 ```
-projeto-ia-chat/
+QuizQuest/
 ├── src/
 │   ├── config/
 │   │   └── config.js
@@ -123,5 +123,4 @@ Este projeto está sob a licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) 
 - [Nomic AI](https://home.nomic.ai) pela biblioteca Node.js
 - Comunidade open source
 
-
-Link do projeto: [https://github.com/williamhssilva/chat-ia-local](https://github.com/williamhssilva/chat-ia-local) 
+Link do projeto: [https://github.com/williamhssilva/QuizQuest](https://github.com/williamhssilva/QuizQuest) 
