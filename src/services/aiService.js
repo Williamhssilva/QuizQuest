@@ -1,5 +1,5 @@
 const { loadModel, createCompletion } = require('gpt4all');
-const config = require('../config/config');
+const getConfig = require('../config/config');
 
 class AIService {
     constructor() {
@@ -8,8 +8,21 @@ class AIService {
         this.isReady = false;
         this.requestQueue = [];
         this.isProcessing = false;
-        this.initModel();
+        this.config = null;
+        this.init();
         console.log('AIService iniciado - Aguardando carregamento do modelo...');
+    }
+
+    async init() {
+        try {
+            // Carrega a configuração primeiro
+            this.config = await getConfig();
+            // Depois inicia o modelo
+            await this.initModel();
+        } catch (error) {
+            console.error('❌ Erro na inicialização:', error);
+            throw error;
+        }
     }
 
     async addToQueue(question, type = 'normal') {
@@ -53,11 +66,11 @@ class AIService {
     async initModel() {
         try {
             this.isLoading = true;
-            console.log('Iniciando carregamento do modelo:', config.modelConfig.modelName);
-            console.log('Caminho do modelo:', config.modelConfig.modelPath);
+            console.log('Iniciando carregamento do modelo:', this.config.modelConfig.modelName);
+            console.log('Caminho do modelo:', this.config.modelConfig.modelPath);
             
-            this.model = await loadModel(config.modelConfig.modelName, {
-                modelPath: config.modelConfig.modelPath,
+            this.model = await loadModel(this.config.modelConfig.modelName, {
+                modelPath: this.config.modelConfig.modelPath,
                 verbose: true
             });
             
@@ -156,6 +169,29 @@ class AIService {
             throw error;
         }
     }
+
+    async getSystemMetrics() {
+        const used = process.memoryUsage();
+        
+        return {
+            memory: {
+                heapTotal: Math.round(used.heapTotal / 1024 / 1024) + 'MB',
+                heapUsed: Math.round(used.heapUsed / 1024 / 1024) + 'MB',
+                rss: Math.round(used.rss / 1024 / 1024) + 'MB',
+                external: Math.round(used.external / 1024 / 1024) + 'MB'
+            },
+            queue: {
+                length: this.requestQueue.length,
+                processing: this.isProcessing
+            },
+            model: {
+                ready: this.isReady,
+                loading: this.isLoading
+            }
+        };
+    }
 }
 
-module.exports = new AIService();
+// Criamos e exportamos uma instância única
+const aiService = new AIService();
+module.exports = aiService;
